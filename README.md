@@ -6,7 +6,7 @@ Bulk upload configure operation
 ## Installation
 
 ```cgo
-go get github.com/xuri/excelize
+git clone https://github.com/lefeck/f5ltm.git
 ```
 
 ## Reading spreadshee
