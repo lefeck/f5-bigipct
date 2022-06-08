@@ -1,5 +1,5 @@
 # f5ltm
-Bulk upload configure operation
+Bulk upload configuration parameters to f5ltm
 
 
 # Basic Usage
@@ -9,7 +9,7 @@ Bulk upload configure operation
 git clone https://github.com/lefeck/f5ltm.git
 ```
 
-## Reading spreadshee
+## Reading spreadsheet to f5ltm
 The following constitutes the bare to read a spreadsheet document.
 ```cgo
 johnny@Host-By f5ltm % go run main.go -h
@@ -32,5 +32,3 @@ virtualserver name Vs_GZGL_APP_8080 create success.
 virtualserver name Vs_GZGL_APP_9000 create success.
 virtualserver name Vs_GZGL_APP_9888 create success.
 ```
-
-# Contributing
