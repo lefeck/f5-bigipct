@@ -1,24 +1,24 @@
-package ltm
+package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
+	"github.com/e-XpertSolutions/f5-rest-client/f5"
+	"github.com/e-XpertSolutions/f5-rest-client/f5/ltm"
+	"github.com/howeyc/gopass"
+	"github.com/xuri/excelize/v2"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"os"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
-
-	"github.com/e-XpertSolutions/f5-rest-client/f5"
-	"github.com/e-XpertSolutions/f5-rest-client/f5/ltm"
-	"github.com/howeyc/gopass"
-	"github.com/xuri/excelize/v2"
+	"time"
 )
 
 /*
- tips : 这是第一种实现方式，这种方式是通过读取Excel中Slice-->Struct中，来实现数据批量导入操作。
+ tips : 这是第二种实现方式，这种方式是通过读取Excel中Slice-->Map-->Struct中，来实现数据批量导入操作。
 */
 
 const HashedPassword = "$2a$10$tnkFMyd/VOWbN5JBWzt4oO5Hc0S6RryXH8KtJsktsUArAPbwZ6dLy"
@@ -45,6 +45,19 @@ type VirtualServer struct {
 	Pool_Member       string
 	Pool_Monitor      string
 	Pool_Lbmode       string
+}
+
+type ExcelData interface {
+	// 把excel中每行数据转换成map
+	CreateMap(arr []string) map[string]interface{}
+	ChangeTime(source string) time.Time
+}
+
+type ExcelStrcut struct {
+	// 二维数组
+	temp  [][]string
+	Model interface{}
+	Info  []map[string]string
 }
 
 func init() {
@@ -74,35 +87,44 @@ func NewF5Client() (*f5.Client, error) {
 	return client, nil
 }
 
-func NewVirtualServers() *VirtualServer {
-	return &VirtualServer{}
+// 读取Excel中数据 转换成二维数组
+func (excel *ExcelStrcut) ReadExcel(file string) *ExcelStrcut {
+	f, err := excelize.OpenFile(file)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	rows, err := f.GetRows("Sheet1")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(rows)
+	excel.temp = rows
+	return excel
 }
 
-func (vs *VirtualServer) Exec(client *f5.Client) (err error) {
-	//files, err := excelize.OpenFile("./create.xlsx")
-	files, err := excelize.OpenFile(file)
-	if err != nil {
-		fmt.Println(err)
+//将二维数组中的每行转成对应的map
+func (excel *ExcelStrcut) CreateMap() *ExcelStrcut {
+	//利用反射得到字段名
+	for _, v := range excel.temp {
+		//将二维数组的每行转成对应切片类型的map
+		var info = make(map[string]string)
+		for i := 0; i < reflect.ValueOf(excel.Model).NumField(); i++ {
+			obj := reflect.TypeOf(excel.Model).Field(i)
+			//fmt.Printf("key:%s--val:%s\n", obj.Name, v[i])
+			info[obj.Name] = v[i]
+		}
+		excel.Info = append(excel.Info, info)
 	}
-	defer files.Close()
+	return excel
+}
 
-	rows, err := files.GetRows(sheet)
+// 时间做格式化
+func (excel *ExcelStrcut) ChangeTime(source string) time.Time {
+	times, err := time.Parse("2006-01-02", source)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalf("转换时间错误:%s", err)
 	}
-
-	for i, row := range rows {
-		if i == 0 {
-			continue
-		}
-		if err := SliceToStruct(row, vs); err != nil {
-			log.Fatal(err)
-		}
-		if err := vs.Create(client); err != nil {
-			log.Fatal(err)
-		}
-	}
-	return nil
+	return times
 }
 
 func (vs *VirtualServer) Create(client *f5.Client) (err error) {
@@ -167,25 +189,44 @@ func (vs *VirtualServer) Create(client *f5.Client) (err error) {
 	return nil
 }
 
-func SliceToStruct(arr []string, u interface{}) error {
-	valueOf := reflect.ValueOf(u)
-	if valueOf.Kind() != reflect.Ptr {
-		return errors.New("must ptr")
-	}
-	valueOf = valueOf.Elem()
-	if valueOf.Kind() != reflect.Struct {
-		return errors.New("must struct")
-	}
-	for i := 0; i < valueOf.NumField(); i++ {
-		if i >= len(arr) {
-			break
+func (excel *ExcelStrcut) MapToStruct(vs *VirtualServer, client *f5.Client) *ExcelStrcut {
+	//忽略标题行
+	for i := 1; i < len(excel.Info); i++ {
+		t := reflect.ValueOf(vs).Elem()
+		for k, v := range excel.Info[i] {
+			// 从map中读取出字段的值和类型
+			//fmt.Println("key:%v---val:%v", t.FieldByName(k), t.FieldByName(k).Kind())
+			switch t.FieldByName(k).Kind() {
+			case reflect.String:
+				//把map中的value写入到struct
+				t.FieldByName(k).Set(reflect.ValueOf(v))
+			case reflect.Float64:
+				strToFloat64, err := strconv.ParseFloat(v, 64)
+				if err != nil {
+					log.Printf("string to float64 err：%v", err)
+				}
+				t.FieldByName(k).Set(reflect.ValueOf(strToFloat64))
+			case reflect.Uint64:
+				strToUint64, err := strconv.ParseUint(v, 10, 64)
+				if err != nil {
+					log.Printf("string to uint64 err：%v", err)
+				}
+				t.FieldByName(k).Set(reflect.ValueOf(strToUint64))
+			case reflect.Struct:
+				times, err := time.Parse("2006-01-02", v)
+				if err != nil {
+					log.Printf("string to time err：%v", err)
+				}
+				t.FieldByName(k).Set(reflect.ValueOf(times))
+			default:
+				fmt.Println("type err")
+			}
 		}
-		val := arr[i]
-		if val != "" && reflect.ValueOf(val).Kind() == valueOf.Field(i).Kind() {
-			valueOf.Field(i).Set(reflect.ValueOf(val))
+		if err := vs.Create(client); err != nil {
+			log.Fatal(err)
 		}
 	}
-	return nil
+	return excel
 }
 
 func StringToSlice(src string) []string {
@@ -208,4 +249,12 @@ func delete_extra_space(s string) string {
 		spc_index = reg.FindStringIndex(string(s2))
 	}
 	return string(s2)
+}
+
+func main() {
+	client, _ := NewF5Client()
+	excel := ExcelStrcut{}
+	vs := VirtualServer{}
+	excel.Model = vs
+	excel.ReadExcel(file).CreateMap().MapToStruct(&vs, client)
 }
