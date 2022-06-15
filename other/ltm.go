@@ -5,11 +5,8 @@ import (
 	"fmt"
 	"github.com/e-XpertSolutions/f5-rest-client/f5"
 	"github.com/e-XpertSolutions/f5-rest-client/f5/ltm"
-	"github.com/howeyc/gopass"
 	"github.com/xuri/excelize/v2"
-	"golang.org/x/crypto/bcrypt"
 	"log"
-	"os"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -21,7 +18,7 @@ import (
  tips : 这是第二种实现方式，这种方式是通过读取Excel中Slice-->Map-->Struct中，来实现数据批量导入操作。
 */
 
-const HashedPassword = "$2a$10$tnkFMyd/VOWbN5JBWzt4oO5Hc0S6RryXH8KtJsktsUArAPbwZ6dLy"
+//const HashedPassword = "$2a$10$tnkFMyd/VOWbN5JBWzt4oO5Hc0S6RryXH8KtJsktsUArAPbwZ6dLy"
 
 var (
 	host     string
@@ -61,19 +58,19 @@ type ExcelStrcut struct {
 }
 
 func init() {
-	flag.StringVar(&host, "host", "192.168.1.1", "Host ip address.")
-	flag.StringVar(&user, "user", "admin", "Username to login to the host.")
-	flag.StringVar(&password, "password", "admin", "Password to login to the host.")
-	flag.StringVar(&file, "f", "/tmp/test.xlsx", "Specifies an alternative configuration file.")
-	flag.StringVar(&sheet, "sheet", "Sheet1", "Specifies the table name of the workbook")
+	flag.StringVar(&host, "a", "192.168.1.1", "the host ip address.")
+	flag.StringVar(&user, "u", "admin", "specifies the username of login host.")
+	flag.StringVar(&password, "p", "admin", "specifies the password of login host.")
+	flag.StringVar(&file, "f", "/tmp/test.xlsx", "specifies an alternative configuration file.")
+	flag.StringVar(&sheet, "s", "Sheet1", "specifies the table name of the workbook.")
 
 	flag.Parse()
 
 	// default password : "7923w4T28M"
-	password, _ := gopass.GetPasswdPrompt("please input password: ", true, os.Stdin, os.Stdout)
-	if err := bcrypt.CompareHashAndPassword([]byte(HashedPassword), []byte(password)); err != nil {
-		log.Fatalf("login password err: %v ", err)
-	}
+	//password, _ := gopass.GetPasswdPrompt("please input password: ", true, os.Stdin, os.Stdout)
+	//if err := bcrypt.CompareHashAndPassword([]byte(HashedPassword), []byte(password)); err != nil {
+	//	log.Fatalf("login password err: %v ", err)
+	//}
 }
 
 func NewF5Client() (*f5.Client, error) {
@@ -150,7 +147,7 @@ func (vs *VirtualServer) Create(client *f5.Client) (err error) {
 
 	profile := StringToSlice(vs.Profiles)
 
-	if vs.Persistence == "None" {
+	if vs.Persistence == "none" {
 		vss = ltm.VirtualServer{
 			Name:             vs.Virtual_Name,
 			Destination:      vs.Vs_Destination,
