@@ -187,12 +187,12 @@ func SliceToStruct(arr []string, u interface{}) error {
 func StringToSlice(src string) []string {
 	var result []string
 	str := strings.Replace(src, "\n", " ", 1)
-	s := delete_extra_space(str)
+	s := DeleteExtraSpace(str)
 	splitSlice := strings.Split(s, " ")
 	return append(result, splitSlice...)
 }
 
-func delete_extra_space(s string) string {
+func DeleteExtraSpace(s string) string {
 	s1 := strings.Replace(s, "	", " ", -1)
 	regstr := "\\s{2,}"
 	reg, _ := regexp.Compile(regstr)
