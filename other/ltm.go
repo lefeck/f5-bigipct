@@ -228,7 +228,7 @@ func (excel *ExcelStrcut) MapToStruct(vs *VirtualServer, client *f5.Client) *Exc
 
 func StringToSlice(src string) []string {
 	var result []string
-	str := strings.Replace(src, "\n", " ", 1)
+	str := strings.Replace(src, "\n", " ", -1)
 	s := DeleteExtraSpace(str)
 	splitSlice := strings.Split(s, " ")
 	return append(result, splitSlice...)
