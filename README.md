@@ -9,6 +9,9 @@ Bulk upload configuration parameters to f5ltm
 git clone https://github.com/lefeck/f5ltm.git
 ```
 
+## view excel sheet
+![img](./xlsx.png)
+
 ## Reading spreadsheet to f5ltm
 The following constitutes the bare to read a spreadsheet document.
 ```cgo
