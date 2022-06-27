@@ -10,6 +10,8 @@ git clone https://github.com/lefeck/f5ltm.git
 ```
 
 ## view excel sheet
+You should customize the value in the cell according to the header specified by the excel sheet, and make sure it is correct. As shown in the following excel sheet:
+
 ![img](./xlsx.png)
 
 ## Reading spreadsheet to f5ltm
