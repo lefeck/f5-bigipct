@@ -7,7 +7,7 @@ import (
 )
 
 var writeCmd = &cobra.Command{
-	Use:   "write",
+	Use:   "export",
 	Short: "Read f5 device data and write to excel sheet",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return writeRun()

@@ -7,7 +7,7 @@ import (
 )
 
 var readCmd = &cobra.Command{
-	Use:   "read",
+	Use:   "import",
 	Short: "Read the excel configuration and load it to the f5 device",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return readRun()
