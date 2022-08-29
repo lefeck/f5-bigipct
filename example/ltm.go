@@ -76,7 +76,7 @@ func init() {
 func NewF5Client() (*f5.Client, error) {
 	hosts := fmt.Sprintf("https://" + host)
 	client, err := f5.NewBasicClient(hosts, user, password)
-	//client, err := f5.NewBasicClient("https://192.168.10.84", "admin", "admin")
+	//clients, err := f5.NewBasicClient("https://192.168.10.84", "admin", "admin")
 	client.DisableCertCheck()
 	if err != nil {
 		fmt.Println(err)
@@ -155,7 +155,7 @@ func (vs *VirtualServer) Create(client *f5.Client) (err error) {
 			Profiles:         profile,
 			TranslateAddress: vs.Translate_Address,
 			TranslatePort:    vs.Translate_Port,
-			//Persistences:             []ltm.Persistence{{Name: vs.Persistence}},
+			//Persistences:             []pkg.Persistence{{Name: vs.Persistence}},
 			Pool:                     vs.Pool_Name,
 			SourceAddressTranslation: ltm.SourceAddressTranslation{Type: vs.Snat_Type, Pool: ""},
 		}
