@@ -3,11 +3,6 @@
 * Read f5 bigip configuration to excel
 
 
-20 / 5,000
-翻译结果
-read f5 bigip configuration to excel
-
-
 # Basic Usage
 ## Installation
 
