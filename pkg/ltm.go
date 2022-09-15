@@ -2,7 +2,7 @@ package pkg
 
 import (
 	"errors"
-	"f5ltm/com"
+	"f5ltm/conf"
 	"fmt"
 	"log"
 	"reflect"
@@ -42,8 +42,8 @@ func NewVirtualServers() *VirtualServers {
 }
 
 func NewF5Clients() (*f5.Client, error) {
-	hosts := fmt.Sprintf("https://" + com.Host)
-	client, err := f5.NewBasicClient(hosts, com.Username, com.Password)
+	hosts := fmt.Sprintf("https://" + conf.Host)
+	client, err := f5.NewBasicClient(hosts, conf.Username, conf.Password)
 	//clients, err := f5.NewBasicClient("https://192.168.10.84", "admin", "admin")
 	client.DisableCertCheck()
 	if err != nil {
@@ -54,13 +54,13 @@ func NewF5Clients() (*f5.Client, error) {
 
 func (vs *VirtualServers) Read(client *f5.Client) (err error) {
 	//files, err := excelize.OpenFile("./create.xlsx")
-	files, err := excelize.OpenFile(com.File)
+	files, err := excelize.OpenFile(conf.File)
 	if err != nil {
 		log.Fatalf("open file failed: %s", err)
 	}
 	defer files.Close()
 
-	rows, err := files.GetRows(com.Sheet)
+	rows, err := files.GetRows(conf.Sheet)
 	if err != nil {
 		log.Fatalf("the sheet is not exist: %s", err)
 	}

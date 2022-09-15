@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	"f5ltm/com"
+	"f5ltm/conf"
 	"fmt"
 	"github.com/e-XpertSolutions/f5-rest-client/f5"
 	"github.com/e-XpertSolutions/f5-rest-client/f5/ltm"
@@ -21,8 +21,8 @@ func NewVirtualServer() *VirtualServer {
 }
 
 func NewF5Client() (*f5.Client, error) {
-	hosts := fmt.Sprintf("https://" + com.Host)
-	client, err := f5.NewBasicClient(hosts, com.Username, com.Password)
+	hosts := fmt.Sprintf("https://" + conf.Host)
+	client, err := f5.NewBasicClient(hosts, conf.Username, conf.Password)
 	//clients, err := f5.NewBasicClient("https://192.168.10.84", "admin", "admin")
 	client.DisableCertCheck()
 	if err != nil {
@@ -53,13 +53,13 @@ func (vs VirtualServer) Write(client *f5.Client) (err error) {
 		log.Fatalf("clients open transaction: %s", err)
 	}
 	ltmclient := ltm.New(tx)
-	if err := WriteVirtualServerToXlsx(vs, com.File, ltmclient); err != nil {
+	if err := WriteVirtualServerToXlsx(vs, conf.File, ltmclient); err != nil {
 		log.Fatalf("write virtualserver to xlsx failed: %s", err)
 	}
-	if err := WriteProfiesToXlsx(com.File, ltmclient); err != nil {
+	if err := WriteProfiesToXlsx(conf.File, ltmclient); err != nil {
 		log.Fatalf("write profiles to xlsx failed: %s", err)
 	}
-	if err := WriteMonitorsToXlsx(com.File, ltmclient); err != nil {
+	if err := WriteMonitorsToXlsx(conf.File, ltmclient); err != nil {
 		log.Fatalf("write monitors to xlsx failed: %s", err)
 	}
 	return nil
@@ -79,7 +79,7 @@ func WriteVirtualServerToXlsx(vs VirtualServer, file string, ltmclient ltm.LTM) 
 		vs = StructToStruct(value, snatpoolname, poolmembernames)
 		result = append(result, vs)
 	}
-	files = WriteXlsx(com.Sheet, result)
+	files = WriteXlsx(conf.Sheet, result)
 	if err := files.SaveAs(file); err != nil {
 		log.Fatalf("file save failed: %s", err)
 	}
@@ -132,7 +132,7 @@ func WriteMonitorsToXlsx(file string, ltmclient ltm.LTM) error {
 
 func CreateExcelString(f *excelize.File, src string, i int) error {
 	str := StringSplitSubString(src)
-	if err := f.SetCellValue(com.Sheet, fmt.Sprintf("%s%d", "M", i+2), str); err != nil {
+	if err := f.SetCellValue(conf.Sheet, fmt.Sprintf("%s%d", "M", i+2), str); err != nil {
 		return err
 	}
 	return nil
@@ -140,7 +140,7 @@ func CreateExcelString(f *excelize.File, src string, i int) error {
 
 func CreateExcelSlice(f *excelize.File, src []string, i int) error {
 	str := SliceToString(src)
-	if err := f.SetCellValue(com.Sheet, fmt.Sprintf("%s%d", "G", i+2), str); err != nil {
+	if err := f.SetCellValue(conf.Sheet, fmt.Sprintf("%s%d", "G", i+2), str); err != nil {
 		return err
 	}
 	return nil

@@ -1,4 +1,4 @@
-package com
+package conf
 
 var (
 	Host     string
