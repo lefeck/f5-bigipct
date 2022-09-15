@@ -19,42 +19,50 @@ You should customize the value in the cell according to the header specified by 
 The following constitutes the bare to read a spreadsheet document.
 ```cgo
 johnny@Host-By f5ltm % ./ltm -h                 
-ltm controls the f5 bigip devices.
-  _____  ____   _    _____  __  __ 
- |  ___|| ___| | |  |_   _||  \/  |
- | |_   |___ \ | |    | |  | |\/| |
- |  _|   ___) || |___ | |  | |  | |
- |_|    |____/ |_____||_|  |_|  |_|
+NAME:
+   ltm - ltm controls the f5 bigip devices.
+           _____  ____   _    _____  __  __ 
+          |  ___|| ___| | |  |_   _||  \/  |
+          | |_   |___ \ | |    | |  | |\/| |
+          |  _|   ___) || |___ | |  | |  | |
+          |_|    |____/ |_____||_|  |_|  |_|
+                                            
+         
 
-Usage:
-  ltm [flags]
-  ltm [command]
+USAGE:
+   ltm [global options] command [command options] [arguments...]
 
-Available Commands:
-  completion  Generate the autocompletion script for the specified shell
-  help        Help about any command
-  import        Read the excel configuration and load it to the f5 device
-  version     Show ltm version
-  export      Read f5 device data and write to excel sheet
+VERSION:
+   2.0
 
-Flags:
-  -h, --help   help for ltm
+AUTHOR:
+   Johnny Wilson <jw6759792@gmail.com>
 
-Use "ltm [command] --help" for more information about a command.
+COMMANDS:
+   import   
+   export   
+   help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --help, -h     show help (default: false)
+   --version, -v  print the version (default: false)
 
 johnny@Host-By f5ltm % ./ltm import -h
-Read the excel configuration and load it to the f5 device
+NAME:
+   ltm import
 
-Usage:
-  ltm import [flags]
+USAGE:
+   ltm import [command options] [arguments...]
 
-Flags:
-  -f, --file string       Specifies an alternative configuration file (default "/tmp/create.xlsx")
-  -h, --help              help for import
-  -a, --host string       The host ip address (default "127.0.0.1")
-  -p, --password string   Password for the given user (default "admin")
-  -s, --sheet string      Specifies the table name of the workbook (default "Sheet1")
-  -u, --username string   The username of the host (default "admin")
+DESCRIPTION:
+   Read the excel configuration and load it to the f5 device
+
+OPTIONS:
+   --file value, -f value      This file is used for read or write operations. (default: "./ltm.xlsx")
+   --host value, -a value      Enter the address to connect to the remote host. (default: "127.0.0.1")
+   --password value, -p value  Password to connect to the remote host. (default: "admin")
+   --sheet value, -s value     The table name of the workbook. (default: "Sheet1")
+   --username value, -u value  Username to connect to the remote host. (default: "admin")
 
 johnny@Host-By f5ltm % ./ltm import -a 192.168.10.84 -f ./create.xlsx
 virtualserver name Vs_GZGL_APP_18080 create success.
@@ -66,18 +74,21 @@ virtualserver name Vs_GZGL_APP_9888 create success.
 ## Read f5 bigip configuration to excel sheet
 ```cgo
 johnny@Host-By f5ltm % ./ltm export -h
-Read f5 device data and write to excel sheet
+NAME:
+   ltm export
 
-Usage:
-  ltm export [flags]
+USAGE:
+   ltm export [command options] [arguments...]
 
-Flags:
-  -f, --file string       Specifies an alternative configuration file (default "/tmp/create.xlsx")
-  -h, --help              help for write
-  -a, --host string       The host ip address (default "127.0.0.1")
-  -p, --password string   Password for the given user (default "admin")
-  -s, --sheet string      Specifies the table name of the workbook (default "Sheet1")
-  -u, --username string   The username of the host (default "admin")
+DESCRIPTION:
+   Read f5 device data and write to excel sheet
+
+OPTIONS:
+   --file value, -f value      This file is used for read or write operations. (default: "./ltm.xlsx")
+   --host value, -a value      Enter the address to connect to the remote host. (default: "127.0.0.1")
+   --password value, -p value  Password to connect to the remote host. (default: "admin")
+   --sheet value, -s value     The table name of the workbook. (default: "Sheet1")
+   --username value, -u value  Username to connect to the remote host. (default: "admin")
 
 johnny@Host-By f5ltm % ./ltm export -a 192.168.10.84 -f ./create.xlsx
 ```
