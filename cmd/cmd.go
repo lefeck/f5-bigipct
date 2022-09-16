@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-func Init() *cli.App {
+func NewApp() *cli.App {
 	app := &cli.App{
 		Name:                   "ltm",
 		UseShortOptionHandling: true,
@@ -33,29 +33,24 @@ func Init() *cli.App {
 			Name:        "import",
 			Description: "Read the excel configuration and load it to the f5 device",
 			Flags:       getFlag(),
-			Action:      handler,
+			Action:      action,
 		},
 		{
 			Name:        "export",
 			Description: "Read f5 device data and write to excel sheet",
 			Flags:       getFlag(),
-			Action:      handler,
+			Action:      action,
 		},
 	}
 	return app
 }
 
-func transform(c *cli.Context) {
+func action(c *cli.Context) error {
 	conf.Host = c.String("host")
 	conf.Username = c.String("username")
 	conf.Password = c.String("password")
 	conf.File = c.String("file")
 	conf.Sheet = c.String("sheet")
-	return
-}
-
-func handler(c *cli.Context) error {
-	transform(c)
 	switch c.Command.Name {
 	case "import":
 		if err := imports(); err != nil {
