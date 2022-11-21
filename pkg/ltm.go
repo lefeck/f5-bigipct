@@ -2,7 +2,7 @@ package pkg
 
 import (
 	"errors"
-	"f5ltm/conf"
+	//"f5ltm"
 	"fmt"
 	"log"
 	"reflect"
@@ -41,26 +41,15 @@ func NewVirtualServers() *VirtualServers {
 	return &VirtualServers{}
 }
 
-func NewF5Clients() (*f5.Client, error) {
-	hosts := fmt.Sprintf("https://" + conf.Host)
-	client, err := f5.NewBasicClient(hosts, conf.Username, conf.Password)
-	//clients, err := f5.NewBasicClient("https://192.168.10.84", "admin", "admin")
-	client.DisableCertCheck()
-	if err != nil {
-		log.Fatalf("clients connect to f5 device failed: %s", err)
-	}
-	return client, nil
-}
-
-func (vs *VirtualServers) Read(client *f5.Client) (err error) {
+func (vs *VirtualServers) Import(client *f5.Client) (err error) {
 	//files, err := excelize.OpenFile("./create.xlsx")
-	files, err := excelize.OpenFile(conf.File)
+	files, err := excelize.OpenFile(File)
 	if err != nil {
 		log.Fatalf("open file failed: %s", err)
 	}
 	defer files.Close()
 
-	rows, err := files.GetRows(conf.Sheet)
+	rows, err := files.GetRows(Sheet)
 	if err != nil {
 		log.Fatalf("the sheet is not exist: %s", err)
 	}

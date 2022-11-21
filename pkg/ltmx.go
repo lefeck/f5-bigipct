@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"f5ltm/conf"
 	"fmt"
 	"github.com/e-XpertSolutions/f5-rest-client/f5"
 	"github.com/e-XpertSolutions/f5-rest-client/f5/ltm"
@@ -20,17 +19,6 @@ func NewVirtualServer() *VirtualServer {
 	return &VirtualServer{}
 }
 
-func NewF5Client() (*f5.Client, error) {
-	hosts := fmt.Sprintf("https://" + conf.Host)
-	client, err := f5.NewBasicClient(hosts, conf.Username, conf.Password)
-	//clients, err := f5.NewBasicClient("https://192.168.10.84", "admin", "admin")
-	client.DisableCertCheck()
-	if err != nil {
-		log.Fatalf("clients connect to f5 device failed: %s", err)
-	}
-	return client, nil
-}
-
 type VirtualServer struct {
 	Partition         string `json:"partition" xlsx:"partition"`
 	VirtualServerName string `json:"virtualservername" xlsx:"virtualservername"`
@@ -47,19 +35,19 @@ type VirtualServer struct {
 	Monitors          string `json:"monitors" xlsx:"monitors"`
 }
 
-func (vs VirtualServer) Write(client *f5.Client) (err error) {
+func (vs VirtualServer) Export(client *f5.Client) (err error) {
 	tx, err := client.Begin()
 	if err != nil {
 		log.Fatalf("clients open transaction: %s", err)
 	}
 	ltmclient := ltm.New(tx)
-	if err := WriteVirtualServerToXlsx(vs, conf.File, ltmclient); err != nil {
+	if err := WriteVirtualServerToXlsx(vs, File, ltmclient); err != nil {
 		log.Fatalf("write virtualserver to xlsx failed: %s", err)
 	}
-	if err := WriteProfiesToXlsx(conf.File, ltmclient); err != nil {
+	if err := WriteProfiesToXlsx(File, ltmclient); err != nil {
 		log.Fatalf("write profiles to xlsx failed: %s", err)
 	}
-	if err := WriteMonitorsToXlsx(conf.File, ltmclient); err != nil {
+	if err := WriteMonitorsToXlsx(File, ltmclient); err != nil {
 		log.Fatalf("write monitors to xlsx failed: %s", err)
 	}
 	return nil
@@ -79,7 +67,7 @@ func WriteVirtualServerToXlsx(vs VirtualServer, file string, ltmclient ltm.LTM) 
 		vs = StructToStruct(value, snatpoolname, poolmembernames)
 		result = append(result, vs)
 	}
-	files = WriteXlsx(conf.Sheet, result)
+	files = WriteXlsx(Sheet, result)
 	if err := files.SaveAs(file); err != nil {
 		log.Fatalf("file save failed: %s", err)
 	}
@@ -132,7 +120,7 @@ func WriteMonitorsToXlsx(file string, ltmclient ltm.LTM) error {
 
 func CreateExcelString(f *excelize.File, src string, i int) error {
 	str := StringSplitSubString(src)
-	if err := f.SetCellValue(conf.Sheet, fmt.Sprintf("%s%d", "M", i+2), str); err != nil {
+	if err := f.SetCellValue(Sheet, fmt.Sprintf("%s%d", "M", i+2), str); err != nil {
 		return err
 	}
 	return nil
@@ -140,7 +128,7 @@ func CreateExcelString(f *excelize.File, src string, i int) error {
 
 func CreateExcelSlice(f *excelize.File, src []string, i int) error {
 	str := SliceToString(src)
-	if err := f.SetCellValue(conf.Sheet, fmt.Sprintf("%s%d", "G", i+2), str); err != nil {
+	if err := f.SetCellValue(Sheet, fmt.Sprintf("%s%d", "G", i+2), str); err != nil {
 		return err
 	}
 	return nil
@@ -171,11 +159,11 @@ func WriteXlsx(sheet string, records interface{}) *excelize.File {
 			if tag == "" {
 				continue
 			}
-			// 设置表头
+			// Setting the header
 			if i == 0 {
 				xlsx.SetCellValue(sheet, fmt.Sprintf("%s%d", column, i+1), name)
 			}
-			// 设置内容
+			// Setting the content
 			xlsx.SetCellValue(sheet, fmt.Sprintf("%s%d", column, i+2), elemValue.Field(j).Interface())
 		}
 	}
@@ -183,6 +171,7 @@ func WriteXlsx(sheet string, records interface{}) *excelize.File {
 }
 
 func StringSplitSubString(src string) (des string) {
+
 	str := strings.SplitN(src, "/", -1)
 	return str[len(str)-1]
 }

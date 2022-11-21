@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"f5ltm/conf"
 	"f5ltm/pkg"
 	"github.com/urfave/cli/v2"
 	"log"
@@ -46,11 +45,11 @@ func NewApp() *cli.App {
 }
 
 func action(c *cli.Context) error {
-	conf.Host = c.String("host")
-	conf.Username = c.String("username")
-	conf.Password = c.String("password")
-	conf.File = c.String("file")
-	conf.Sheet = c.String("sheet")
+	pkg.Host = c.String("host")
+	pkg.Username = c.String("username")
+	pkg.Password = c.String("password")
+	pkg.File = c.String("file")
+	pkg.Sheet = c.String("sheet")
 	switch c.Command.Name {
 	case "import":
 		if err := imports(); err != nil {
@@ -67,13 +66,13 @@ func action(c *cli.Context) error {
 func exports() error {
 	client, _ := pkg.NewF5Client()
 	vs := pkg.NewVirtualServer()
-	return vs.Write(client)
+	return vs.Export(client)
 }
 
 func imports() error {
-	client, _ := pkg.NewF5Clients()
+	client, _ := pkg.NewF5Client()
 	vs := pkg.NewVirtualServers()
-	return vs.Read(client)
+	return vs.Import(client)
 }
 
 func getFlag() []cli.Flag {
