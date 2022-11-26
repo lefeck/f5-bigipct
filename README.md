@@ -18,19 +18,11 @@ You should customize the value in the cell according to the header specified by 
 ## Reading spreadsheet to f5 bigip
 The following constitutes the bare to read a spreadsheet document.
 ```cgo
-johnny@Host-By f5ltm % ./ltm -h                 
+[root@localhost ~]# ./f5-bigipct -h                 
 NAME:
-   ltm - ltm controls the f5 bigip devices.
-           _____  ____   _    _____  __  __ 
-          |  ___|| ___| | |  |_   _||  \/  |
-          | |_   |___ \ | |    | |  | |\/| |
-          |  _|   ___) || |___ | |  | |  | |
-          |_|    |____/ |_____||_|  |_|  |_|
-                                            
-         
-
+   f5-bigipct - f5-bigipct controls the f5 bigip devices.
 USAGE:
-   ltm [global options] command [command options] [arguments...]
+   f5-bigipct [global options] command [command options] [arguments...]
 
 VERSION:
    2.0
@@ -49,10 +41,10 @@ GLOBAL OPTIONS:
 
 johnny@Host-By f5ltm % ./ltm import -h
 NAME:
-   ltm import
+   f5-bigipct import
 
 USAGE:
-   ltm import [command options] [arguments...]
+   f5-bigipct import [command options] [arguments...]
 
 DESCRIPTION:
    Read the excel configuration and load it to the f5 device
@@ -64,7 +56,7 @@ OPTIONS:
    --sheet value, -s value     The table name of the workbook. (default: "Sheet1")
    --username value, -u value  Username to connect to the remote host. (default: "admin")
 
-johnny@Host-By f5ltm % ./ltm import -a 192.168.10.84 -f ./create.xlsx
+[root@localhost ~]# ./f5-bigipct import -a 192.168.10.84 -f ./create.xlsx
 virtualserver name Vs_GZGL_APP_18080 create success.
 virtualserver name Vs_GZGL_APP_8080 create success.
 virtualserver name Vs_GZGL_APP_9000 create success.
@@ -73,12 +65,12 @@ virtualserver name Vs_GZGL_APP_9888 create success.
 
 ## Read f5 bigip configuration to excel sheet
 ```cgo
-johnny@Host-By f5ltm % ./ltm export -h
+[root@localhost ~]# ./f5-bigipct export -h
 NAME:
-   ltm export
+   f5-bigipct export
 
 USAGE:
-   ltm export [command options] [arguments...]
+   f5-bigipct export [command options] [arguments...]
 
 DESCRIPTION:
    Read f5 device data and write to excel sheet

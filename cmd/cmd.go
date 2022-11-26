@@ -8,17 +8,10 @@ import (
 
 func NewApp() *cli.App {
 	app := &cli.App{
-		Name:                   "ltm",
+		Name:                   "f5-bigipct",
 		UseShortOptionHandling: true,
-		Usage: `ltm controls the f5 bigip devices.
-  _____  ____   _    _____  __  __ 
- |  ___|| ___| | |  |_   _||  \/  |
- | |_   |___ \ | |    | |  | |\/| |
- |  _|   ___) || |___ | |  | |  | |
- |_|    |____/ |_____||_|  |_|  |_|
-                                   
-`,
-		Version: "2.0",
+		Usage:                  "f5-bigipct controls the f5 bigip devices.",
+		Version:                "2.0",
 		Authors: []*cli.Author{
 			{
 				Name:  "Johnny Wilson",
