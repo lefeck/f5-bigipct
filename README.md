@@ -82,7 +82,7 @@ OPTIONS:
    --sheet value, -s value     The table name of the workbook. (default: "Sheet1")
    --username value, -u value  Username to connect to the remote host. (default: "admin")
 
-johnny@Host-By f5ltm % ./ltm export -a 192.168.10.84 -f ./create.xlsx
+[root@localhost ~]# ./f5-bigipct export -a 192.168.10.84 -f ./create.xlsx
 ```
 # view excel sheet
 ![img](./xlsxs.png)
